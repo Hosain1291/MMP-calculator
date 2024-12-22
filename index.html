@@ -376,56 +376,55 @@
         }
     }
 function calculateSeats() {
-const totalConstituencySeats = parseInt(document.getElementById('totalConstituencySeats').value);
-const totalPRSeats = parseInt(document.getElementById('totalPRSeats').value);
-const blockingThreshold = parseFloat(document.getElementById('blockingThreshold').value);
+    const totalConstituencySeats = parseInt(document.getElementById('totalConstituencySeats').value);
+    const totalPRSeats = parseInt(document.getElementById('totalPRSeats').value);
+    const blockingThreshold = parseFloat(document.getElementById('blockingThreshold').value);
 
-if (isNaN(totalConstituencySeats) || isNaN(totalPRSeats) || parties.length === 0) {
-    alert('모든 필수 정보를 입력해주세요.');
-    return;
-}
+    if (isNaN(totalConstituencySeats) || isNaN(totalPRSeats) || parties.length === 0) {
+        alert('모든 필수 정보를 입력해주세요.');
+        return;
+    }
 
-const totalSeats = totalConstituencySeats + totalPRSeats;
+    const totalSeats = totalConstituencySeats + totalPRSeats;
 
-// 봉쇄조항 적용
-const validParties = parties.filter(party => party.votes >= blockingThreshold);
+    // 봉쇄조항 적용
+    const validParties = parties.filter(party => party.votes >= blockingThreshold);
+    const excludedParties = parties.filter(party => party.votes < blockingThreshold); // 제외된 정당
 
-// 유효 정당 득표율 재계산
-const totalValidVotes = validParties.reduce((sum, party) => sum + party.votes, 0);
-
-validParties.forEach(party => {
-    party.adjustedVotes = (party.votes / totalValidVotes) * 100;
-});
-
-// 연동배분 의석수 계산
-validParties.forEach(party => {
-    const theoreticalSeats = Math.round((party.adjustedVotes / 100) * totalSeats);
-    party.compensatorySeats = Math.max(0, theoreticalSeats - party.constituencySeats);
-});
-
-// 비례대표 의석 배분
-const totalCompensatorySeats = validParties.reduce((sum, party) => sum + party.compensatorySeats, 0);
-
-if (totalCompensatorySeats > 0) {
-    const compensationRatio = totalPRSeats / totalCompensatorySeats;
+    // 유효 정당 득표율 재계산
+    const totalValidVotes = validParties.reduce((sum, party) => sum + party.votes, 0);
     validParties.forEach(party => {
-        party.finalPRSeats = Math.round(party.compensatorySeats * compensationRatio);
-        party.totalSeats = party.constituencySeats + party.finalPRSeats;
+        party.adjustedVotes = (party.votes / totalValidVotes) * 100;
     });
-} else {
+
+    // 연동배분 의석수 계산
     validParties.forEach(party => {
-        party.finalPRSeats = 0; // 보상 의석이 없으면 비례대표 의석도 0
-        party.totalSeats = party.constituencySeats; // 총 의석수는 지역구 의석수와 동일
+        const theoreticalSeats = Math.round((party.adjustedVotes / 100) * totalSeats);
+        party.compensatorySeats = Math.max(0, theoreticalSeats - party.constituencySeats);
     });
+
+    // 비례대표 의석 배분
+    const totalCompensatorySeats = validParties.reduce((sum, party) => sum + party.compensatorySeats, 0);
+    if (totalCompensatorySeats > 0) {
+        const compensationRatio = totalPRSeats / totalCompensatorySeats;
+        validParties.forEach(party => {
+            party.finalPRSeats = Math.round(party.compensatorySeats * compensationRatio);
+            party.totalSeats = party.constituencySeats + party.finalPRSeats;
+        });
+    } else {
+        validParties.forEach(party => {
+            party.finalPRSeats = 0; // 보상 의석이 없으면 비례대표 의석도 0
+            party.totalSeats = party.constituencySeats; // 총 의석수는 지역구 의석수와 동일
+        });
+    }
+
+    displayResults(validParties, excludedParties, totalSeats);
 }
 
-displayResults(validParties, totalSeats);
-}
-
-function displayResults(validParties, totalSeats) {
+function displayResults(validParties, excludedParties, totalSeats) {
     const independentSeats = parseInt(document.getElementById('independentSeats').value) || 0;
     const resultsDiv = document.getElementById('results');
-    
+
     let tableHTML = `
         <table class="results-table">
             <thead>
@@ -449,6 +448,16 @@ function displayResults(validParties, totalSeats) {
                         <td>${((party.totalSeats / (totalSeats + independentSeats)) * 100).toFixed(1)}%</td>
                     </tr>
                 `).join('')}
+                ${excludedParties.map(party => `
+                    <tr>
+                        <td style="color: #808080">${party.name} (제외)</td>
+                        <td>${party.votes.toFixed(1)}%</td>
+                        <td>${party.constituencySeats}</td>
+                        <td>0</td>
+                        <td>${party.constituencySeats}</td>
+                        <td>${((party.constituencySeats / (totalSeats + independentSeats)) * 100).toFixed(1)}%</td>
+                    </tr>
+                `).join('')}
                 ${independentSeats > 0 ? `
                     <tr>
                         <td style="color: #808080">무소속</td>
@@ -462,33 +471,45 @@ function displayResults(validParties, totalSeats) {
             </tbody>
         </table>
     `;
-    
+
     resultsDiv.innerHTML = tableHTML;
-    updateChart(validParties);
+    updateChart(validParties, excludedParties);
 }
 
-function updateChart(validParties) {
+function updateChart(validParties, excludedParties) {
     const ctx = document.getElementById('seatsChart').getContext('2d');
     const independentSeats = parseInt(document.getElementById('independentSeats').value) || 0;
-    
+
     if (chart) {
         chart.destroy();
     }
-    
-    // 무소속을 포함한 데이터 생성
-    const chartLabels = [...validParties.map(p => p.name)];
-    const chartData = [...validParties.map(p => p.totalSeats)];
-    const chartColors = [...validParties.map(p => p.color + '99')];
-    const chartBorders = [...validParties.map(p => p.color)];
+
+    // 데이터 생성
+    const chartLabels = [...validParties.map(p => p.name), ...excludedParties.map(p => p.name + ' (제외)')];
+    const chartData = [
+        ...validParties.map(p => p.totalSeats), 
+        ...excludedParties.map(p => p.constituencySeats) // 제외된 정당의 지역구 의석도 추가
+    ];
+
+    // 색상 설정
+    const chartColors = [
+        ...validParties.map(p => p.color + '99'), // 유효 정당은 원래 색상 + 투명도
+        ...excludedParties.map(p => p.color + '99') // 제외된 정당은 원래 색상 + 투명도
+    ];
+
+    const chartBorders = [
+        ...validParties.map(p => p.color), // 유효 정당은 원래 색상
+        ...excludedParties.map(p => p.color) // 제외된 정당은 원래 색상
+    ];
 
     // 무소속 데이터 추가
     if (independentSeats > 0) {
         chartLabels.push('무소속');
         chartData.push(independentSeats);
-        chartColors.push('#80808099'); // 회색 + 투명도
-        chartBorders.push('#808080');   // 회색
+        chartColors.push('#80808099'); // 무소속은 회색 + 투명도
+        chartBorders.push('#808080');   // 무소속도 회색
     }
-    
+
     chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -514,6 +535,7 @@ function updateChart(validParties) {
         }
     });
 }
+
 function savePartiesToTxt() {
     const totalConstituencySeats = document.getElementById('totalConstituencySeats').value;
     const totalPRSeats = document.getElementById('totalPRSeats').value;
