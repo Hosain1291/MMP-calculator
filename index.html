@@ -372,9 +372,27 @@ function renderParties() {
         if (field === 'color') {
             parties[index][field] = value;
         } else {
-            parties[index][field] = parseFloat(value);
+            parties[index][field] = field === 'votes' || field === 'constituencySeats' ? parseFloat(value) : value;
+        }
+
+        // 그래프 업데이트
+        const blockingThreshold = parseFloat(document.getElementById('blockingThreshold').value);
+        const validParties = parties.filter(party => party.votes >= blockingThreshold);
+        const excludedParties = parties.filter(party => party.votes < blockingThreshold);
+        
+        updateChart(validParties, excludedParties);
+    }
+
+    function updatePartyName(index, newName) {
+        if (parties[index]) {
+            parties[index].name = newName;  // 정당 이름 업데이트
+            const blockingThreshold = parseFloat(document.getElementById('blockingThreshold').value);
+            const validParties = parties.filter(party => party.votes >= blockingThreshold);
+            const excludedParties = parties.filter(party => party.votes < blockingThreshold);
+            updateChart(validParties, excludedParties); // 그래프 업데이트
         }
     }
+
 function calculateSeats() {
     const totalConstituencySeats = parseInt(document.getElementById('totalConstituencySeats').value);
     const totalPRSeats = parseInt(document.getElementById('totalPRSeats').value);
@@ -438,9 +456,9 @@ function displayResults(validParties, excludedParties, totalSeats) {
                 </tr>
             </thead>
             <tbody>
-                ${validParties.map(party => `
+                ${validParties.map((party, index) => `
                     <tr>
-                        <td style="color: ${party.color}">${party.name}</td>
+                        <td>${party.name}</td> <!-- 정당 이름을 일반 텍스트로 표시 -->
                         <td>${party.votes.toFixed(1)}%</td>
                         <td>${party.constituencySeats}</td>
                         <td>${party.finalPRSeats}</td>
