@@ -1,437 +1,510 @@
 <!DOCTYPE html>
+
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>연동형 비례대표제 계산기</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
-            --secondary: #64748b;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-        }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
 
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            line-height: 1.5;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+<title>연동형 비례대표제 계산기</title>
 
-        .card {
-            background: var(--surface);
-            border-radius: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--primary);
-        }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+<style>
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
+:root {
 
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
-        }
+--primary: #2563eb;
 
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
+--primary-light: #3b82f6;
 
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
+--secondary: #64748b;
 
-        input[type="color"] {
-            height: 42px;
-            padding: 0.25rem;
-        }
+--danger: #ef4444;
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+--success: #22c55e;
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+--background: #f8fafc;
 
-        .btn-primary:hover {
-            background: var(--primary-light);
-        }
+--surface: #ffffff;
 
-        .btn-secondary {
-            background: var(--secondary);
-            color: white;
-        }
+--text: #1e293b;
 
-        .party-list {
-            display: grid;
-            gap: 1rem;
-        }
+--border: #e2e8f0;
 
+}
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .card {
+        background: var(--surface);
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--primary);
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--secondary);
+    }
+
+    input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    input[type="color"] {
+        height: 42px;
+        padding: 0.25rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-light);
+    }
+
+    .btn-secondary {
+        background: var(--secondary);
+        color: white;
+    }
+
+    .party-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .party-item {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+    }
+
+    .party-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .party-stat {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .party-stat-label {
+        font-size: 0.875rem;
+        color: var(--secondary);
+    }
+
+    .party-stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .chart-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 2rem auto;
+        height: 400px;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .results-table th {
+        background: #f8fafc;
+        font-weight: 500;
+    }
+
+    .delete-btn {
+        background: var(--danger);
+        color: white;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
         .party-item {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr auto;
-            gap: 1rem;
-            align-items: center;
-            padding: 1rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
+            grid-template-columns: 1fr;
         }
-
+        
         .party-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            padding: 1rem;
-            background: #f8fafc;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
+            grid-template-columns: 1fr;
         }
+    }
+    .summary-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+}
 
-        .party-stat {
-            display: flex;
-            flex-direction: column;
-        }
+.total-percentage, .constituency-seats {
+    text-align: center;
+}
 
-        .party-stat-label {
-            font-size: 0.875rem;
-            color: var(--secondary);
-        }
+.summary-container h4 {
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
 
-        .party-stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .chart-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 2rem auto;
-            height: 400px;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-        }
-
-        .results-table th,
-        .results-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .results-table th {
-            background: #f8fafc;
-            font-weight: 500;
-        }
-
-        .delete-btn {
-            background: var(--danger);
-            color: white;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .party-item {
-                grid-template-columns: 1fr;
-            }
-            
-            .party-info {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+.summary-container p {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+</style>
 </head>
-<body>
-    <div class="container">
-        <h1>연동형 비례대표제 계산기</h1>
 
-        <div class="card">
-            <div class="grid">
-                <div class="form-group">
-                    <label for="totalConstituencySeats">지역구 총 의석수</label>
-                    <input type="number" id="totalConstituencySeats" min="1" placeholder="예: 253">
-                </div>
-                <div class="form-group">
-                    <label for="totalPRSeats">비례대표 총 의석수</label>
-                    <input type="number" id="totalPRSeats" min="1" placeholder="예: 47">
-                </div>
-                <div class="form-group">
-                    <label for="blockingThreshold">봉쇄조항 (%)</label>
-                    <input type="number" id="blockingThreshold" min="0" max="100" value="3" step="0.1">
-                </div>
+<body>
+
+<div class="container">
+
+<h1>연동형 비례대표제 계산기</h1>
+
+    <div class="card">
+        <div class="grid">
+            <div class="form-group">
+                <label for="totalConstituencySeats">지역구 총 의석수</label>
+                <input type="number" id="totalConstituencySeats" min="1" placeholder="예: 253">
+            </div>
+            <div class="form-group">
+                <label for="totalPRSeats">비례대표 총 의석수</label>
+                <input type="number" id="totalPRSeats" min="1" placeholder="예: 47">
+            </div>
+            <div class="form-group">
+                <label for="blockingThreshold">봉쇄조항 (%)</label>
+                <input type="number" id="blockingThreshold" min="0" max="100" value="3" step="0.1">
             </div>
         </div>
-
-        <div class="card">
-            <div class="form-group">
-                <label>새 정당 추가</label>
-                <div class="party-item">
-                    <input type="text" id="partyName" placeholder="정당명">
-                    <input type="number" id="partyVotes" placeholder="정당 득표율 (%)" step="0.1">
-                    <input type="number" id="constituencySeats" placeholder="지역구 의석수">
-                    <input type="color" id="partyColor" value="#2563eb">
-                    <button class="btn btn-primary" onclick="addParty()">추가</button>
-                </div>
-            </div>
-            <div id="partyList" class="party-list"></div>
-
-             <!-- 무소속 의석 수 입력 필드 추가 -->
-    <div class="form-group">
-        <label for="independentSeats">무소속 의석수</label>
-        <input type="number" id="independentSeats" min="0" placeholder="무소속 의석수" value="0">
     </div>
-    
-    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+
+    <div class="card">
+        <div class="form-group">
+            <label>새 정당 추가</label>
+            <div class="party-item">
+                <input type="text" id="partyName" placeholder="정당명">
+                <input type="number" id="partyVotes" placeholder="정당 득표율 (%)" step="0.1">
+                <input type="number" id="constituencySeats" placeholder="지역구 의석수">
+                <input type="color" id="partyColor" value="#2563eb">
+                <button class="btn btn-primary" onclick="addParty()">추가</button>
+            </div>
+        </div>
+        <div id="partyList" class="party-list"></div>
+
+         <!-- 무소속 의석 수 입력 필드 추가 -->
+<div class="form-group">
+    <label for="independentSeats">무소속 의석수</label>
+    <input type="number" id="independentSeats" min="0" placeholder="무소속 의석수" value="0">
+</div>
+
+<div class="card" style="display: flex; justify-content: space-between; align-items: center;">
     <div>
         <button class="btn btn-primary" onclick="savePartiesToTxt()">TXT로 저장</button>
         <input type="file" id="fileInput" style="display:none" accept=".txt" onchange="loadPartiesFromTxt(event)">
         <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">TXT에서 불러오기</button>
     </div>
 </div>
+
+<button class="btn btn-primary" onclick="calculateSeats()" style="margin-top: 1rem">의석 계산하기</button>
+
 </div>
-            <button class="btn btn-primary" onclick="calculateSeats()" style="margin-top: 1rem">의석 계산하기</button>
-        </div>
 
-        <div class="card">
-            <div class="chart-container">
-                <canvas id="seatsChart"></canvas>
-            </div>
-            <div id="results"></div>
+    <div class="card">
+        <div class="chart-container">
+            <canvas id="seatsChart"></canvas>
         </div>
+        <div id="results"></div>
     </div>
+</div>
 
-    <script>
-        let parties = [];
-        let chart = null;
+<script>
+    let parties = [];
+    let chart = null;
 
-        function addParty() {
-            const name = document.getElementById('partyName').value;
-            const votes = parseFloat(document.getElementById('partyVotes').value);
-            const constituencySeats = parseInt(document.getElementById('constituencySeats').value);
-            const color = document.getElementById('partyColor').value;
+    function addParty() {
+        const name = document.getElementById('partyName').value;
+        const votes = parseFloat(document.getElementById('partyVotes').value);
+        const constituencySeats = parseInt(document.getElementById('constituencySeats').value);
+        const color = document.getElementById('partyColor').value;
 
-            if (!name || isNaN(votes) || isNaN(constituencySeats)) {
-                alert('모든 필드를 올바르게 입력해주세요.');
-                return;
-            }
-
-            parties.push({
-                name,
-                votes,
-                constituencySeats,
-                color
-            });
-
-            // Clear inputs
-            document.getElementById('partyName').value = '';
-            document.getElementById('partyVotes').value = '';
-            document.getElementById('constituencySeats').value = '';
-            document.getElementById('partyColor').value = '#2563eb';
-
-            renderParties();
+        if (!name || isNaN(votes) || isNaN(constituencySeats)) {
+            alert('모든 필드를 올바르게 입력해주세요.');
+            return;
         }
 
-        function deleteParty(index) {
-            parties.splice(index, 1);
-            renderParties();
+        parties.push({
+            name,
+            votes,
+            constituencySeats,
+            color
+        });
+
+        // Clear inputs
+        document.getElementById('partyName').value = '';
+        document.getElementById('partyVotes').value = '';
+        document.getElementById('constituencySeats').value = '';
+        document.getElementById('partyColor').value = '#2563eb';
+
+        renderParties();
+    }
+
+    function deleteParty(index) {
+        parties.splice(index, 1);
+        renderParties();
+    }
+
+    function renderParties() {
+        const container = document.getElementById('partyList');
+        container.innerHTML = '';
+
+        parties.forEach((party, index) => {
+            const div = document.createElement('div');
+            div.className = 'party-item';
+            div.innerHTML = `
+                <input type="text" value="${party.name}" readonly>
+                <input type="number" value="${party.votes}" 
+                       onchange="updateParty(${index}, 'votes', this.value)" step="0.1">
+                <input type="number" value="${party.constituencySeats}" 
+                       onchange="updateParty(${index}, 'constituencySeats', this.value)">
+                <input type="color" value="${party.color}" 
+                       onchange="updateParty(${index}, 'color', this.value)">
+                <button class="delete-btn" onclick="deleteParty(${index})">삭제</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function updateParty(index, field, value) {
+        if (field === 'color') {
+            parties[index][field] = value;
+        } else {
+            parties[index][field] = parseFloat(value);
         }
-
-        function renderParties() {
-            const container = document.getElementById('partyList');
-            container.innerHTML = '';
-
-            parties.forEach((party, index) => {
-                const div = document.createElement('div');
-                div.className = 'party-item';
-                div.innerHTML = `
-                    <input type="text" value="${party.name}" readonly>
-                    <input type="number" value="${party.votes}" 
-                           onchange="updateParty(${index}, 'votes', this.value)" step="0.1">
-                    <input type="number" value="${party.constituencySeats}" 
-                           onchange="updateParty(${index}, 'constituencySeats', this.value)">
-                    <input type="color" value="${party.color}" 
-                           onchange="updateParty(${index}, 'color', this.value)">
-                    <button class="delete-btn" onclick="deleteParty(${index})">삭제</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function updateParty(index, field, value) {
-            if (field === 'color') {
-                parties[index][field] = value;
-            } else {
-                parties[index][field] = parseFloat(value);
-            }
-        }
-
+    }
 function calculateSeats() {
-    const totalConstituencySeats = parseInt(document.getElementById('totalConstituencySeats').value);
-    const totalPRSeats = parseInt(document.getElementById('totalPRSeats').value);
-    const blockingThreshold = parseFloat(document.getElementById('blockingThreshold').value);
+const totalConstituencySeats = parseInt(document.getElementById('totalConstituencySeats').value);
+const totalPRSeats = parseInt(document.getElementById('totalPRSeats').value);
+const blockingThreshold = parseFloat(document.getElementById('blockingThreshold').value);
 
-    if (isNaN(totalConstituencySeats) || isNaN(totalPRSeats) || parties.length === 0) {
-        alert('모든 필수 정보를 입력해주세요.');
-        return;
-    }
-
-    const totalSeats = totalConstituencySeats + totalPRSeats;
-
-    // 봉쇄조항 적용
-    const validParties = parties.filter(party => party.votes >= blockingThreshold);
-
-    // 유효 정당 득표율 재계산
-    const totalValidVotes = validParties.reduce((sum, party) => sum + party.votes, 0);
-    
-    validParties.forEach(party => {
-        party.adjustedVotes = (party.votes / totalValidVotes) * 100;
-    });
-
-    // 연동배분 의석수 계산
-    validParties.forEach(party => {
-        const theoreticalSeats = Math.round((party.adjustedVotes / 100) * totalSeats);
-        party.compensatorySeats = Math.max(0, theoreticalSeats - party.constituencySeats);
-    });
-
-    // 비례대표 의석 배분
-    const totalCompensatorySeats = validParties.reduce((sum, party) => sum + party.compensatorySeats, 0);
-    
-    if (totalCompensatorySeats > 0) {
-        const compensationRatio = totalPRSeats / totalCompensatorySeats;
-        validParties.forEach(party => {
-            party.finalPRSeats = Math.round(party.compensatorySeats * compensationRatio);
-            party.totalSeats = party.constituencySeats + party.finalPRSeats;
-        });
-    } else {
-        validParties.forEach(party => {
-            party.finalPRSeats = 0; // 보상 의석이 없으면 비례대표 의석도 0
-            party.totalSeats = party.constituencySeats; // 총 의석수는 지역구 의석수와 동일
-        });
-    }
-
-    displayResults(validParties, totalSeats);
+if (isNaN(totalConstituencySeats) || isNaN(totalPRSeats) || parties.length === 0) {
+    alert('모든 필수 정보를 입력해주세요.');
+    return;
 }
 
-        function displayResults(validParties, totalSeats) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>정당</th>
-                            <th>득표율</th>
-                            <th>지역구 의석</th>
-                            <th>비례대표 의석</th>
-                            <th>총 의석</th>
-                            <th>최종 의석률</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${validParties.map(party => `
-                            <tr>
-                                <td style="color: ${party.color}">${party.name}</td>
-                                <td>${party.votes.toFixed(1)}%</td>
-                                <td>${party.constituencySeats}</td>
-                                <td>${party.finalPRSeats}</td>
-                                <td>${party.totalSeats}</td>
-                                <td>${((party.totalSeats / totalSeats) * 100).toFixed(1)}%</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+const totalSeats = totalConstituencySeats + totalPRSeats;
 
-            updateChart(validParties);
-        }
+// 봉쇄조항 적용
+const validParties = parties.filter(party => party.votes >= blockingThreshold);
 
-function updateChart(parties) {
+// 유효 정당 득표율 재계산
+const totalValidVotes = validParties.reduce((sum, party) => sum + party.votes, 0);
+
+validParties.forEach(party => {
+    party.adjustedVotes = (party.votes / totalValidVotes) * 100;
+});
+
+// 연동배분 의석수 계산
+validParties.forEach(party => {
+    const theoreticalSeats = Math.round((party.adjustedVotes / 100) * totalSeats);
+    party.compensatorySeats = Math.max(0, theoreticalSeats - party.constituencySeats);
+});
+
+// 비례대표 의석 배분
+const totalCompensatorySeats = validParties.reduce((sum, party) => sum + party.compensatorySeats, 0);
+
+if (totalCompensatorySeats > 0) {
+    const compensationRatio = totalPRSeats / totalCompensatorySeats;
+    validParties.forEach(party => {
+        party.finalPRSeats = Math.round(party.compensatorySeats * compensationRatio);
+        party.totalSeats = party.constituencySeats + party.finalPRSeats;
+    });
+} else {
+    validParties.forEach(party => {
+        party.finalPRSeats = 0; // 보상 의석이 없으면 비례대표 의석도 0
+        party.totalSeats = party.constituencySeats; // 총 의석수는 지역구 의석수와 동일
+    });
+}
+
+displayResults(validParties, totalSeats);
+}
+
+function displayResults(validParties, totalSeats) {
+    const independentSeats = parseInt(document.getElementById('independentSeats').value) || 0;
+    const resultsDiv = document.getElementById('results');
+    
+    let tableHTML = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>정당</th>
+                    <th>득표율</th>
+                    <th>지역구 의석</th>
+                    <th>비례대표 의석</th>
+                    <th>총 의석</th>
+                    <th>최종 의석률</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${validParties.map(party => `
+                    <tr>
+                        <td style="color: ${party.color}">${party.name}</td>
+                        <td>${party.votes.toFixed(1)}%</td>
+                        <td>${party.constituencySeats}</td>
+                        <td>${party.finalPRSeats}</td>
+                        <td>${party.totalSeats}</td>
+                        <td>${((party.totalSeats / (totalSeats + independentSeats)) * 100).toFixed(1)}%</td>
+                    </tr>
+                `).join('')}
+                ${independentSeats > 0 ? `
+                    <tr>
+                        <td style="color: #808080">무소속</td>
+                        <td>-</td>
+                        <td>${independentSeats}</td>
+                        <td>0</td>
+                        <td>${independentSeats}</td>
+                        <td>${((independentSeats / (totalSeats + independentSeats)) * 100).toFixed(1)}%</td>
+                    </tr>
+                ` : ''}
+            </tbody>
+        </table>
+    `;
+    
+    resultsDiv.innerHTML = tableHTML;
+    updateChart(validParties);
+}
+
+function updateChart(validParties) {
     const ctx = document.getElementById('seatsChart').getContext('2d');
+    const independentSeats = parseInt(document.getElementById('independentSeats').value) || 0;
     
     if (chart) {
         chart.destroy();
     }
     
+    // 무소속을 포함한 데이터 생성
+    const chartLabels = [...validParties.map(p => p.name)];
+    const chartData = [...validParties.map(p => p.totalSeats)];
+    const chartColors = [...validParties.map(p => p.color + '99')];
+    const chartBorders = [...validParties.map(p => p.color)];
+
+    // 무소속 데이터 추가
+    if (independentSeats > 0) {
+        chartLabels.push('무소속');
+        chartData.push(independentSeats);
+        chartColors.push('#80808099'); // 회색 + 투명도
+        chartBorders.push('#808080');   // 회색
+    }
+    
     chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: parties.map(p => p.name),
+            labels: chartLabels,
             datasets: [{
-                data: parties.map(p => p.totalSeats),
-                backgroundColor: parties.map(p => p.color + '99'),
-                borderColor: parties.map(p => p.color),
+                data: chartData,
+                backgroundColor: chartColors,
+                borderColor: chartBorders,
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            rotation: -90, // 시작 각도를 왼쪽 끝으로
-            circumference: 180, // 180도로 제한하여 반원 생성
-            cutout: '60%', // 도넛 차트의 중앙 공간 비율
+            rotation: -90,
+            circumference: 180,
+            cutout: '60%',
             plugins: {
                 title: {
                     display: true,
@@ -459,7 +532,7 @@ function savePartiesToTxt() {
     const blob = new Blob([dataStr], {type: 'text/plain'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'proportional_representation_data.txt';
+    link.download = '연동형비례데이타.txt';
     link.click();
 }
 
