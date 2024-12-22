@@ -292,6 +292,11 @@
         </div>
         <div id="partyList" class="party-list"></div>
 
+        <div class="form-group">
+            <label for="totalVotePercentage">총 득표율</label>
+            <input type="text" id="totalVotePercentage" readonly placeholder="총 득표율" style="background: #f0f0f0;">
+        </div>
+
          <!-- 무소속 의석 수 입력 필드 추가 -->
 <div class="form-group">
     <label for="independentSeats">무소속 의석수</label>
@@ -322,32 +327,33 @@
     let parties = [];
     let chart = null;
 
-    function addParty() {
-        const name = document.getElementById('partyName').value;
-        const votes = parseFloat(document.getElementById('partyVotes').value);
-        const constituencySeats = parseInt(document.getElementById('constituencySeats').value);
-        const color = document.getElementById('partyColor').value;
+function addParty() {
+    const name = document.getElementById('partyName').value;
+    const votes = parseFloat(document.getElementById('partyVotes').value);
+    const constituencySeats = parseInt(document.getElementById('constituencySeats').value);
+    const color = document.getElementById('partyColor').value;
 
-        if (!name || isNaN(votes) || isNaN(constituencySeats)) {
-            alert('모든 필드를 올바르게 입력해주세요.');
-            return;
-        }
-
-        parties.push({
-            name,
-            votes,
-            constituencySeats,
-            color
-        });
-
-        // Clear inputs
-        document.getElementById('partyName').value = '';
-        document.getElementById('partyVotes').value = '';
-        document.getElementById('constituencySeats').value = '';
-        document.getElementById('partyColor').value = '#2563eb';
-
-        renderParties();
+    if (!name || isNaN(votes) || isNaN(constituencySeats)) {
+        alert('모든 필드를 올바르게 입력해주세요.');
+        return;
     }
+
+    parties.push({
+        name,
+        votes,
+        constituencySeats,
+        color
+    });
+
+    // Clear inputs
+    document.getElementById('partyName').value = '';
+    document.getElementById('partyVotes').value = '';
+    document.getElementById('constituencySeats').value = '';
+    document.getElementById('partyColor').value = '#2563eb';
+
+    renderParties();
+    updateTotalVotePercentage(); // 총 득표율 업데이트
+}
 
     function deleteParty(index) {
         parties.splice(index, 1);
@@ -414,7 +420,7 @@ function calculateSeats() {
 
     // 봉쇄조항 적용
     const validParties = parties.filter(party => party.votes >= blockingThreshold);
-    const excludedParties = parties.filter(party => party.votes < blockingThreshold); // 제외된 정당
+    const excludedParties = parties.filter(party => party.votes < blockingThreshold);
 
     // 유효 정당 득표율 재계산
     const totalValidVotes = validParties.reduce((sum, party) => sum + party.votes, 0);
@@ -450,6 +456,9 @@ function displayResults(validParties, excludedParties, totalSeats) {
     const independentSeats = parseInt(document.getElementById('independentSeats').value) || 0;
     const resultsDiv = document.getElementById('results');
 
+    // 총 득표율 계산
+    const totalVotes = validParties.reduce((sum, party) => sum + party.votes, 0).toFixed(1);
+
     let tableHTML = `
         <table class="results-table">
             <thead>
@@ -463,9 +472,9 @@ function displayResults(validParties, excludedParties, totalSeats) {
                 </tr>
             </thead>
             <tbody>
-                ${validParties.map((party, index) => `
+                ${validParties.map((party) => `
                     <tr>
-                        <td>${party.name}</td> <!-- 정당 이름을 일반 텍스트로 표시 -->
+                        <td>${party.name}</td>
                         <td>${party.votes.toFixed(1)}%</td>
                         <td>${party.constituencySeats}</td>
                         <td>${party.finalPRSeats}</td>
@@ -493,6 +502,10 @@ function displayResults(validParties, excludedParties, totalSeats) {
                         <td>${((independentSeats / (totalSeats + independentSeats)) * 100).toFixed(1)}%</td>
                     </tr>
                 ` : ''}
+                <tr>
+                    <td colspan="1" style="text-align: right;"><strong>총 득표율:</strong></td>
+                    <td colspan="5">${totalVotes}%</td>
+                </tr>
             </tbody>
         </table>
     `;
@@ -609,6 +622,11 @@ function loadPartiesFromTxt(event) {
     
     reader.readAsText(file);
 }
+function updateTotalVotePercentage() {
+    const totalVotes = parties.reduce((sum, party) => sum + party.votes, 0).toFixed(1);
+    document.getElementById('totalVotePercentage').value = totalVotes + '%';
+}
+
     </script>
 </body>
 </html>
