@@ -409,49 +409,38 @@ function calculateSeats() {
             updateChart(validParties);
         }
 
-        function updateChart(parties) {
-            const ctx = document.getElementById('seatsChart').getContext('2d');
-            
-            if (chart) {
-                chart.destroy();
-            }
-            
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: parties.map(p => p.name),
-                    datasets: [
-                        {
-                            label: '지역구 의석',
-                            data: parties.map(p => p.constituencySeats),
-                            backgroundColor: parties.map(p => p.color + '99'),
-                            borderColor: parties.map(p => p.color),
-                            borderWidth: 1
-                        },
-                        {
-                            label: '비례대표 의석',
-                            data: parties.map(p => p.finalPRSeats),
-                            backgroundColor: parties.map(p => p.color + '55'),
-                            borderColor: parties.map(p => p.color),
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true,
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true
-                        }
-                    },
+function updateChart(parties) {
+    const ctx = document.getElementById('seatsChart').getContext('2d');
+    
+    if (chart) {
+        chart.destroy();
+    }
+    
+    chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: parties.map(p => p.name),
+            datasets: [{
+                data: parties.map(p => p.totalSeats),
+                backgroundColor: parties.map(p => p.color + '99'),
+                borderColor: parties.map(p => p.color),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            rotation: -90, // 시작 각도를 왼쪽 끝으로
+            circumference: 180, // 180도로 제한하여 반원 생성
+            cutout: '60%', // 도넛 차트의 중앙 공간 비율
+            plugins: {
+                title: {
+                    display: true,
+                    text: '정당별 총 의석 분포'
                 }
-            });
+            }
         }
+    });
+}
 function savePartiesToTxt() {
     const totalConstituencySeats = document.getElementById('totalConstituencySeats').value;
     const totalPRSeats = document.getElementById('totalPRSeats').value;
