@@ -246,7 +246,13 @@
         <input type="number" id="independentSeats" min="0" placeholder="무소속 의석수" value="0">
     </div>
     
-    <button class="btn btn-primary" onclick="calculateSeats()" style="margin-top: 1rem">의석 계산하기</button>
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <button class="btn btn-primary" onclick="savePartiesToTxt()">TXT로 저장</button>
+        <input type="file" id="fileInput" style="display:none" accept=".txt" onchange="loadPartiesFromTxt(event)">
+        <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">TXT에서 불러오기</button>
+    </div>
+</div>
 </div>
             <button class="btn btn-primary" onclick="calculateSeats()" style="margin-top: 1rem">의석 계산하기</button>
         </div>
@@ -446,6 +452,54 @@ function calculateSeats() {
                 }
             });
         }
+function savePartiesToTxt() {
+    const totalConstituencySeats = document.getElementById('totalConstituencySeats').value;
+    const totalPRSeats = document.getElementById('totalPRSeats').value;
+    const blockingThreshold = document.getElementById('blockingThreshold').value;
+    const independentSeats = document.getElementById('independentSeats').value;
+
+    const saveData = {
+        totalConstituencySeats,
+        totalPRSeats,
+        blockingThreshold,
+        independentSeats,
+        parties
+    };
+
+    const dataStr = JSON.stringify(saveData, null, 2);
+    const blob = new Blob([dataStr], {type: 'text/plain'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'proportional_representation_data.txt';
+    link.click();
+}
+
+function loadPartiesFromTxt(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const parsedData = JSON.parse(e.target.result);
+            
+            // 입력 필드 복원
+            document.getElementById('totalConstituencySeats').value = parsedData.totalConstituencySeats;
+            document.getElementById('totalPRSeats').value = parsedData.totalPRSeats;
+            document.getElementById('blockingThreshold').value = parsedData.blockingThreshold;
+            document.getElementById('independentSeats').value = parsedData.independentSeats || 0;
+
+            // 정당 목록 복원
+            parties = parsedData.parties;
+            renderParties();
+
+            alert('파일에서 데이터를 성공적으로 불러왔습니다.');
+        } catch (error) {
+            alert('유효하지 않은 파일입니다.');
+        }
+    };
+    
+    reader.readAsText(file);
+}
     </script>
 </body>
 </html>
