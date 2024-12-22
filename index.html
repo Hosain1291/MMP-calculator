@@ -347,27 +347,27 @@
         renderParties();
     }
 
-    function renderParties() {
-        const container = document.getElementById('partyList');
-        container.innerHTML = '';
+function renderParties() {
+    const container = document.getElementById('partyList');
+    container.innerHTML = '';
 
-        parties.forEach((party, index) => {
-            const div = document.createElement('div');
-            div.className = 'party-item';
-            div.innerHTML = `
-                <input type="text" value="${party.name}" readonly>
-                <input type="number" value="${party.votes}" 
-                       onchange="updateParty(${index}, 'votes', this.value)" step="0.1">
-                <input type="number" value="${party.constituencySeats}" 
-                       onchange="updateParty(${index}, 'constituencySeats', this.value)">
-                <input type="color" value="${party.color}" 
-                       onchange="updateParty(${index}, 'color', this.value)">
-                <button class="delete-btn" onclick="deleteParty(${index})">삭제</button>
-            `;
-            container.appendChild(div);
-        });
-    }
-
+    parties.forEach((party, index) => {
+        const div = document.createElement('div');
+        div.className = 'party-item';
+        div.innerHTML = `
+            <input type="text" value="${party.name}" 
+                   onchange="updateParty(${index}, 'name', this.value)">
+            <input type="number" value="${party.votes}" 
+                   onchange="updateParty(${index}, 'votes', this.value)" step="0.1">
+            <input type="number" value="${party.constituencySeats}" 
+                   onchange="updateParty(${index}, 'constituencySeats', this.value)">
+            <input type="color" value="${party.color}" 
+                   onchange="updateParty(${index}, 'color', this.value)">
+            <button class="delete-btn" onclick="deleteParty(${index})">삭제</button>
+        `;
+        container.appendChild(div);
+    });
+}
     function updateParty(index, field, value) {
         if (field === 'color') {
             parties[index][field] = value;
